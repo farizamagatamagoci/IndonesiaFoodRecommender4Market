@@ -50,6 +50,12 @@ async def auth_refresh_token(data: RefreshTokenData, session = Depends(get_db_se
             # sa.func.if_(
             #     UserLogin.expired_at > sa.func.NOW(), 0, 1 #jika expired_at lebih dari 0 (gabakal expired)
             # ).label('expired')
+            # sa.case
+            #     WHEN UserLogin.expired_at > sa.func.NOW(), 0, 1
+            #     THEN UserLogin.expired
+            #     ELSE NULL
+            # END AS expired
+            str((UserLogin.expired_at).label('expired'))
         ).where(
             UserLogin.user_id == User.id,
             UserLogin.refresh_token == data.refresh_token

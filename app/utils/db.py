@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 
 from app.config import config
 
-SQLALCHEMY_DATABASE_URL = 'sqlite:///./userpendakick'
+SQLALCHEMY_DATABASE_URL = 'sqlite:///./datakantinburjo'
 
 db_engine = create_engine(
     SQLALCHEMY_DATABASE_URL,

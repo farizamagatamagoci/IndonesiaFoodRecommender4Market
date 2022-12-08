@@ -16,7 +16,7 @@ class Config(BaseSettings):
     DB_ECHO: bool = False #setiap query akan diunlock
 
     class Config:
-        env_file = '.env'
+     env_file = '.env'
 
 @lru_cache
 def get_config():
