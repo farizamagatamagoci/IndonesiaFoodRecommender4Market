@@ -1,24 +1,24 @@
 import pandas as pd
-from server.api_models.base_response import BaseResponseModel
+from server.api_models.base_response_food import BaseResponseModelFood
 import scipy
 import os
 
 from server.api_models.food_model import FoodModel
 
-class GetRecommenderFoodResponseModel(BaseResponseModel):
+from fastapi import Depends
+from server.auth.authentication import Authentication
+
+class GetRecommenderFoodResponseModel(BaseResponseModelFood):
     class Config:
         schema_extra = {
             'example': {
-                'data': [
+                'Makanan Terlaris': {'Makanan Terlaris' : 'Bubur Sumsum',},
+                'Makanan Rekomendasi': [
                     {
                     'nomor': 1,
-                    'makanan': 'Seblak Ceker Naga'
+                    'makanan' : 'Es Kacang Ijo'
                     }
-                ],
-                'meta': {},
-                'success': True,
-                'code': 200,
-                'message': 'Success'
+                ]
             }
         }
 
@@ -28,7 +28,7 @@ class GetRecommenderFoodResponseModel(BaseResponseModel):
 df_indonesiafood = pd.read_csv('indonesian_foodsnack.csv')
 df_borjufood = pd.read_csv('burjoproducts.csv')
 
-def new_menu_recommendation(menu_terlaris):
+def new_menu_recommendation(menu_terlaris, payload = Depends(Authentication())):
     LISTNAMAMENU = df_indonesiafood['name'].to_list()
     LISTMENUEXIST = df_borjufood['name'].to_list()
     if not(menu_terlaris in LISTMENUEXIST):
@@ -60,11 +60,13 @@ def new_menu_recommendation(menu_terlaris):
             a += 1
             recommend_frame.append(
                 FoodModel(
+                    makananterlaris = menu_terlaris,
                     nomor = a,
                     makanan = final_df.index[recom]
                 )
             )
 
         return GetRecommenderFoodResponseModel(
-            data= recommend_frame
+            Makanan_Terlaris= menu_terlaris,
+            Makanan_Rekomendasi= recommend_frame
         )

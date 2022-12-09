@@ -14,6 +14,7 @@ from server.routes.transaction_getList import transaction_getList, GetTransactio
 from server.routes.transaction_update import transaction_update
 from server.routes.transaction_cancel import transaction_cancel
 from server.routes.food_recommender import new_menu_recommendation, GetRecommenderFoodResponseModel
+from server.routes.diabetesxfood_recommendation import DiabetesCekFood
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -21,19 +22,23 @@ warnings.filterwarnings('ignore')
 description= """
 Ini adalah API untuk mencatat seluruh transaksi penjualan di suatu warung, mengetahui barang paling laku, dan prediksi barang lain yang kemungkinan laku dijual
 
-## Mencatat seluruh transaksi penjualan di suatu toko
+## Mencatat seluruh transaksi penjualan di suatu warung
 1. Mendapatkan seluruh transaksi yang sudah berjalan
 2. Membuat transaksi baru
 3. Mengupdate sebuah transaksi
 4. Menghapus sebuah transaksi
 
 ## Mengetahui makanan paling laku
-Anda dapat melihat X makanan paling laku di warung tersebut dari transaksi yang sudah berjalan
+Anda dapat melihat seluruh transaksi yang berlangsung dan makanan paling laku di warung tersebut dari transaksi yang sudah berjalan
 
-## Rekomendasi makanan lain yang kemungkinan laku di toko tersebut
+## Rekomendasi makanan lain yang kemungkinan laku di warung tersebut
 Anda dapat melihat rekomendasi makanan lain yang kemungkinan laku dijual di toko tersebut berdasarkan bahan-bahan dasar dari makanan tersebut
 
 -> disini saya akan memakai database warung di Kantin Burjo ITB sebagai subjek secara langsung
+
+## SPESIAL : Mengetahui kondisi Diabetes tubuh Anda dan Merekomendasikan Makanan yang Cocok
+Anda dapat melihat kondisi diabetes tubuh Anda dengan melakukan input-input beberapa kesehatan
+Kamu juga bisa melihat makanan rekomendasi yang bisa memperbaiki pola makan kamu 
 """
 user.Base.metadata.create_all(db_engine)
 user_login.Base.metadata.create_all(db_engine)
@@ -156,12 +161,13 @@ def index():
 
 app.add_api_route('/api/v1/auth/register', auth_register, methods=['POST'], tags=['Auth'], status_code=201)
 app.add_api_route('/api/v1/auth/login', auth_login, methods=['POST'], tags=['Auth'])
-app.add_api_route('/api/v1/transactions/create',transaction_create, methods=['POST'], tags=['Transaction'], response_model=CreateTransactionResponseModel)
-app.add_api_route('/api/v1/transactions/get_list',transaction_getList, methods=['GET'], tags=['Transaction'], response_model=GetTransactionListResponseModel)
-app.add_api_route('/api/v1/transactions/update',transaction_update, methods=['PUT'], tags=['Transaction'], status_code=204)
-app.add_api_route('/api/v1/transactions/cancel',transaction_cancel, methods=['DELETE'], tags=['Transaction'], status_code=204)
+app.add_api_route('/api/v1/transactions/create',transaction_create, methods=['POST'], tags=['Catatan Transaksi'], response_model=CreateTransactionResponseModel)
+app.add_api_route('/api/v1/transactions/get_list',transaction_getList, methods=['GET'], tags=['Catatan Transaksi'], response_model=GetTransactionListResponseModel)
+app.add_api_route('/api/v1/transactions/update',transaction_update, methods=['PUT'], tags=['Catatan Transaksi'], status_code=204)
+app.add_api_route('/api/v1/transactions/cancel',transaction_cancel, methods=['DELETE'], tags=['Catatan Transaksi'], status_code=204)
 
-app.add_api_route('/api/v1/recommender/new_menu',new_menu_recommendation, methods = ['GET'], tags=['Recommender'])
+app.add_api_route('/api/v1/recommender/new_menu',new_menu_recommendation, methods = ['GET'], tags=['Rekomendasi Menu Makanan Baru untuk Penjualan'])
+app.add_api_route('/api/v1/recommender/diabetes_recom_menu', DiabetesCekFood, methods = ['GET'], tags=['Diabetes X Food Recommender'])
 
 if __name__ == '__main__':
-    uvicorn.run("app", host = "0.0.0.0", port = 8090, reload = True)
+    uvicorn.run("/:app", host = "0.0.0.0", port = 8090, reload = True)
