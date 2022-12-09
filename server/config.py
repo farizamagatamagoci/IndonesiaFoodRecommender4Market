@@ -1,4 +1,10 @@
-PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----
+from pydantic import BaseSettings
+from functools import lru_cache
+
+class Config(BaseSettings):
+    ACCESS_TOKEN_EXPIRATION: int = 1* 24 * 60 * 60  # 1 hari
+
+    PRIVATE_KEY = """-----BEGIN RSA PRIVATE KEY-----
 MIIEpAIBAAKCAQEAzplof8d+38kETpI2z8FWJXgTtoxFSkk4ePpfA+830eRLbH9i
 JlBhLSj8OGai6tB3xRjYQ3FjLiuqgz6T3KtIWZE1i3vdZxNkBOFPmyDbwiIU90V0
 rOiPrGKY+kiqWojB2linVCcMdGwp8yueYwURWgHp5PTeg3qpVYYiJdD10x0kxnM7
@@ -24,9 +30,9 @@ ZPf85pAoT7dgtO3aSePADFH69rP9LpKwdaPxXcHoCEwYyVHOw6UEAGWs+V3GmtIz
 6cWYWQKBgQCVxCJI8O04qYOqVRIj4b2aE5J29tIAjgS6S7VF/3DYWnhhMcp8hZR3
 3mZQBPrYze7zewUl4WhhAXbIup6QI75NidBj+GZSiv/MLkjgqmCYBhVXs+Eg0dTI
 F/F6idtmC2mf1ss9xDNF949o3jFl3onrDPa3Rab4Adzj8sUoD+gToQ==
------END RSA PRIVATE KEY-----"
+-----END RSA PRIVATE KEY-----"""
 
-PUBLIC_KEY="-----BEGIN PUBLIC KEY-----
+    PUBLIC_KEY = """-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzplof8d+38kETpI2z8FW
 JXgTtoxFSkk4ePpfA+830eRLbH9iJlBhLSj8OGai6tB3xRjYQ3FjLiuqgz6T3KtI
 WZE1i3vdZxNkBOFPmyDbwiIU90V0rOiPrGKY+kiqWojB2linVCcMdGwp8yueYwUR
@@ -34,9 +40,9 @@ WgHp5PTeg3qpVYYiJdD10x0kxnM7FHSqL7gWsOHZBqzJaVydrPPTo1j7wPZ8SZ68
 n84oQsfAWNmOduY2vIYPMmcRYgw3yoqS2p0aY7SrYti3/9ZIE3D/FgCgQFq3ZdXI
 AvUg6X3wdUuZbt1nKbQzk1xxlsNFyS+hDmWYOJ8L4CwxNbKOCLiFhnBfWRezqLS+
 1wIDAQAB
------END PUBLIC KEY-----"
+-----END PUBLIC KEY-----"""
 
-REFRESH_PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----
+    REFRESH_PRIVATE_KEY = """-----BEGIN RSA PRIVATE KEY-----
 MIIEowIBAAKCAQEA5V6LbMk1qrH37jNJBsvxfh1975OzJbBe+8VDGcnIlLIZGLpi
 bLMKP6HXbEWDUFAPF7vnZIa+OIJQ4mhdXx/SttOodmDmU+UH68/n3FgXnbVEg3o/
 /RvWIUWCyI0u7ICkNqxNKfbBmTX5c4DXPjLrAEPWB2wtTB+bx7YJMblZeKIcLOsU
@@ -62,6 +68,16 @@ asfuqlgpXjrVUxYD5zzXznbz1kTCI3FFNB+SqCiFERk8GN7sC/eQe/iHhhENrnC/
 /ByjAwKBgAkbChHZJKll+NbbCB5oyvGrcfqXQzJM42JM+ylUt+k8JJHcrb0BoMd7
 Z6JheUhZmAQtECj/aArI5oiOXyxwkLoe4H0ZB7QYcwV09ujfmNKwZn6sqle+Ro3T
 AK/tgAwFkuLkau99UK5pN4T1jYdb1OqXMVobHHSBn1pbGF0a2Ien
------END RSA PRIVATE KEY-----"
+-----END RSA PRIVATE KEY-----"""
 
-DB = sqlite:///./kantinburjoitb
+    DB = "sqlite:///./kantinburjoitb"
+    DB_POOL_PRE_PING : bool = True #setiap kali melakukan query ngeping dulu
+    DB_POOL_SIZE : int = 20 #sqlalchemy membuat 20 conncection pool
+    DB_POOL_RECYCLE: int = 1800 #setiap setengah jam connection2 pool nya di recycle, suka putus sendiri jadi harus direcycle
+    DB_ECHO: bool = False #setiap query akan diunlock
+
+@lru_cache
+def get_config():
+    return Config()
+
+config = get_config()
